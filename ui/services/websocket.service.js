@@ -1,4 +1,5 @@
 // WebSocket Service for WiFi-DensePose UI
+import { BASE_PATH } from '../config/base-path.js';
 
 import { API_CONFIG, buildWsUrl } from '../config/api.config.js';
 import { backendDetector } from '../utils/backend-detector.js';
@@ -467,7 +468,10 @@ export class WebSocketService {
         // Get original parameters
         const urlObj = new URL(url);
         const params = Object.fromEntries(urlObj.searchParams);
-        const endpoint = urlObj.pathname;
+        // buildWsUrl() re-prepends BASE_PATH, so strip it from the stored pathname
+        const endpoint = urlObj.pathname.startsWith(BASE_PATH)
+          ? urlObj.pathname.slice(BASE_PATH.length)
+          : urlObj.pathname;
         
         this.logger.debug('Attempting reconnection', { url, endpoint, params });
         

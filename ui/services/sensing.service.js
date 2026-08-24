@@ -1,5 +1,6 @@
 import { withWsTicket } from './ws-ticket.js';
 import { apiService } from './api.service.js';
+import { withBase, BASE_PATH } from '../config/base-path.js';
 /**
  * Sensing WebSocket Service
  *
@@ -26,7 +27,7 @@ export function buildSensingWsUrl(locationLike = (typeof window !== 'undefined' 
   const wsPort = SENSING_WS_PORT_BY_HTTP_PORT[port];
   const wsHost = wsPort ? `${hostname}:${wsPort}` : host;
 
-  return `${protocol}//${wsHost}/ws/sensing`;
+  return `${protocol}//${wsHost}${BASE_PATH}/ws/sensing`;
 }
 
 const SENSING_WS_URL = buildSensingWsUrl();
@@ -315,7 +316,7 @@ class SensingService {
     // enabled) instead of always 401ing and relying solely on the
     // conservative fallback below (issue #1526, suggested fix #1).
     try {
-      const resp = await fetch('/api/v1/status', { headers: apiService.getHeaders() });
+      const resp = await fetch(withBase('/api/v1/status'), { headers: apiService.getHeaders() });
       if (resp.ok) {
         const json = await resp.json();
         this._applyServerSource(json.source, json.source_state);

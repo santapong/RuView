@@ -15,7 +15,8 @@ const CACHE_NAME = 'ruview-v2';
 // `/oauth/status` has no effect here. A cached signed-out response was returned
 // to the page forever, and only a hard reload — which bypasses the service
 // worker entirely — showed the true state. (ADR-271.)
-const NEVER_CACHE_PREFIXES = ['/oauth/'];
+const BASE_PATH = self.registration.scope.replace(/^https?:\/\/[^/]+/, '').replace(/\/$/, '');
+const NEVER_CACHE_PREFIXES = [BASE_PATH + '/oauth/'];
 
 // What may be served cache-first. Previously cache-first was the *catch-all* for
 // everything outside `/api/` and `/health/`, which meant any endpoint added at a
@@ -102,14 +103,14 @@ self.addEventListener('fetch', (event) => {
     // that is ending. Observed, not intercepted — the request itself still goes
     // straight to the network. `waitUntil` keeps the worker alive for the purge
     // even though the navigation is what the browser is really waiting on.
-    if (url.pathname === '/oauth/logout') {
+    if (url.pathname === BASE_PATH + '/oauth/logout') {
       event.waitUntil(purgeNonShell());
     }
     return;
   }
 
   // API calls: network-first with cache fallback
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/health/')) {
+  if (url.pathname.startsWith(BASE_PATH + '/api/') || url.pathname.startsWith(BASE_PATH + '/health/')) {
     event.respondWith(networkFirst(request));
     return;
   }
@@ -195,7 +196,7 @@ async function purgeNonShell() {
     keys
       .filter((req) => {
         const p = new URL(req.url).pathname;
-        return p.startsWith('/api/') || p.startsWith('/health/');
+        return p.startsWith(BASE_PATH + '/api/') || p.startsWith(BASE_PATH + '/health/');
       })
       .map((req) => cache.delete(req))
   );

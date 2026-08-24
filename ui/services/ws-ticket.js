@@ -16,6 +16,7 @@
 // bearer token is still never put in a URL.
 
 import { API_TOKEN_STORAGE_KEY } from './api.service.js';
+import { withBase } from '../config/base-path.js';
 
 function storedToken() {
   try {
@@ -35,7 +36,7 @@ async function mintTicket() {
   if (!token) return null;
 
   try {
-    const resp = await fetch('/api/v1/ws-ticket', {
+    const resp = await fetch(withBase('/api/v1/ws-ticket'), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     });

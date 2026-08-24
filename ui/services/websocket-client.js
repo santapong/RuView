@@ -1,4 +1,5 @@
 import { withWsTicket } from './ws-ticket.js';
+import { BASE_PATH } from '../config/base-path.js';
 // WebSocket Client for Three.js Visualization - WiFi DensePose
 // Default endpoint is `/ws/sensing` on the same host the page was served from.
 // Callers (e.g. viz.html) usually pass an explicit `url` derived from
@@ -9,7 +10,7 @@ function _defaultWsUrl() {
     return 'ws://localhost:8765/ws/sensing';
   }
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${protocol}//${window.location.host}/ws/sensing`;
+  return `${protocol}//${window.location.host}${BASE_PATH}/ws/sensing`;
 }
 
 export class WebSocketClient {

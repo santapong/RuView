@@ -19,6 +19,7 @@ import { FigurePool, SKELETON_PAIRS } from './figure-pool.js';
 import { PoseSystem } from './pose-system.js';
 import { ScenarioProps } from './scenario-props.js';
 import { HudController, DEFAULTS, SETTINGS_VERSION, PRESETS, SCENARIO_NAMES } from './hud-controller.js';
+import { BASE_PATH } from '../config/base-path.js';
 
 // ---- Palette ----
 const C = {
@@ -459,7 +460,7 @@ class Observatory {
           if (data && data.status === 'ok') {
             const wsProto = base.startsWith('https') ? 'wss:' : 'ws:';
             const urlObj = new URL(base);
-            const wsUrl = `${wsProto}//${urlObj.host}/ws/sensing`;
+            const wsUrl = `${wsProto}//${urlObj.host}${urlObj.pathname.includes('/ruview') ? '/ruview' : ''}/ws/sensing`;
             console.log('[Observatory] Sensing server detected at', base, '→', wsUrl);
             this.settings.dataSource = 'ws';
             this.settings.wsUrl = wsUrl;

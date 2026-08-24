@@ -2,6 +2,7 @@
 // Accessible via gear icon in header
 
 import { apiService, API_TOKEN_STORAGE_KEY } from '../services/api.service.js';
+import { withBase } from '../config/base-path.js';
 
 export class QuickSettings {
   constructor(app) {
@@ -126,9 +127,9 @@ export class QuickSettings {
     // ADR-271 sign-in. Bound here as well as in refreshSignInPanel so a click
     // works even if the status fetch has not resolved yet.
     this.panel.querySelector('#qs-signin')
-      .addEventListener('click', () => { window.location.href = '/oauth/start'; });
+      .addEventListener('click', () => { window.location.href = withBase('/oauth/start'); });
     this.panel.querySelector('#qs-signout')
-      .addEventListener('click', () => { window.location.href = '/oauth/logout'; });
+      .addEventListener('click', () => { window.location.href = withBase('/oauth/logout'); });
 
     this.panel.querySelector('#qs-reduced-motion').addEventListener('change', (e) => {
       document.body.classList.toggle('reduced-motion', e.target.checked);
@@ -283,7 +284,7 @@ export async function refreshSignInPanel(root = document) {
 
   let info;
   try {
-    const resp = await fetch('/oauth/status', { credentials: 'same-origin' });
+    const resp = await fetch(withBase('/oauth/status'), { credentials: 'same-origin' });
     // 404 = a server predating ADR-271. Say so plainly rather than offering a
     // button that will 404.
     if (resp.status === 404) {
@@ -324,7 +325,7 @@ export async function refreshSignInPanel(root = document) {
     signOut.hidden = true;
   }
 
-  signIn.onclick = () => { window.location.href = '/oauth/start'; };
-  signOut.onclick = () => { window.location.href = '/oauth/logout'; };
+  signIn.onclick = () => { window.location.href = withBase('/oauth/start'); };
+  signOut.onclick = () => { window.location.href = withBase('/oauth/logout'); };
   return info;
 }

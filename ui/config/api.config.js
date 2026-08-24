@@ -6,8 +6,10 @@ const _origin = (typeof window !== 'undefined' && window.location && window.loca
   ? window.location.origin
   : 'http://localhost:3000';
 
+import { BASE_PATH } from './base-path.js';
+
 export const API_CONFIG = {
-  BASE_URL: _origin,
+  BASE_URL: _origin + BASE_PATH,
   API_VERSION: '/api/v1',
   WS_PREFIX: 'ws://',
   WSS_PREFIX: 'wss://',
@@ -123,7 +125,7 @@ export function buildWsUrl(endpoint, params = {}) {
 
   // Derive host from the page origin so it works on any port (Docker :3000, dev :8080, etc.)
   const host = window.location.host;
-  let url = `${protocol}${host}${endpoint}`;
+  let url = `${protocol}${host}${BASE_PATH}${endpoint}`;
   
   // Add query parameters
   const queryParams = new URLSearchParams(params);
